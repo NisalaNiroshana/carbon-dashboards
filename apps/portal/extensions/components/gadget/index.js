@@ -10,6 +10,8 @@
 
     var server = ues.global.server;
 
+    var host = ues.global.host;
+
     var resolveURI = ues.dashboards.resolveURI;
 
     var context = ues.global.context;
@@ -20,10 +22,12 @@
             return uri;
         }
         uri = uri.replace(/^(..\/)*/i, '');
-        if (window.location.protocol === 'https:') {
-            return 'https://localhost:' + server.httpsPort + context + '/' + uri;
-        }
-        return 'http://localhost:' + server.httpPort + context + '/' + uri;
+        var hostname = host.hostname ? host.hostname : window.location.hostname,
+            port = host.port ? host.port : window.location.port,
+            protocol = host.protocol ? (host.protocol + ":") : window.location.protocol;
+
+        port = port ? (":" + port) : "";
+        return protocol + '//' + hostname + port + context + '/' + uri;
     };
 
     var subscribeForClient = ues.hub.subscribeForClient;

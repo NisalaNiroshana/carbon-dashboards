@@ -29,5 +29,10 @@
     "oauth": {
         "username": "admin",
         "password": "admin"
+    },
+    "host": {
+        "hostname": "localhost",
+        "port": "",
+        "protocol": ""
     }
 }
