@@ -125,9 +125,9 @@
             var gid = gadgetId(comp.id);
             sandbox.find('.ues-component-title').text(styles.title);
             if (styles.no_heading) {
-		        if(isDesigner(sandbox)){
-               		sandbox.addClass('ues-no-heading');
-		        }
+                if(isDesigner(sandbox)){
+                    sandbox.addClass('ues-no-heading');
+                }
                 sandbox.find('.ues-component-heading').hide();
             } else {
                 sandbox.removeClass('ues-no-heading');
