@@ -124,16 +124,14 @@
             var cid = containerId(comp.id);
             var gid = gadgetId(comp.id);
             sandbox.find('.ues-component-title').text(styles.title);
-            if(isDesigner(sandbox)){
-                if (styles.no_heading) {
-                    sandbox.addClass('ues-no-heading');
-                    sandbox.find('.ues-component-heading').hide();
-                }else {
-                    sandbox.removeClass('ues-no-heading');
-                    sandbox.find('.ues-component-heading').show();
-                }
-            }else{
+            if (styles.no_heading) {
+		if(isDesigner(sandbox)){
+               		sandbox.addClass('ues-no-heading');
+		}
                 sandbox.find('.ues-component-heading').hide();
+            }else {
+                	sandbox.removeClass('ues-no-heading');
+                	sandbox.find('.ues-component-heading').show();
             }
             
             var titlePositon = 'ues-component-title-' + (styles.titlePosition || 'left');
