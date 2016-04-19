@@ -129,7 +129,7 @@
                		sandbox.addClass('ues-no-heading');
 		        }
                 sandbox.find('.ues-component-heading').hide();
-            }else {
+            } else {
                 sandbox.removeClass('ues-no-heading');
                 sandbox.find('.ues-component-heading').show();
             }
@@ -180,10 +180,10 @@
 
     //check whether current mode is view or design
     isDesigner = function(sandbox){
-        if((sandbox.context.baseURI).indexOf("?editor=true")==-1){
+        if ((sandbox.context.baseURI).indexOf("?editor=true")==-1){
             return false;
         }
-        else{
+        else {
             return true;
         }
     };
