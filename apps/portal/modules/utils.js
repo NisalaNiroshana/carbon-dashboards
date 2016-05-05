@@ -55,7 +55,7 @@ var allowed = function (roles, allowed) {
         }
         return false;
     };
-    if(hasRole(adminRole, roles)){
+    if (hasRole(adminRole, roles)) {
         return true;
     }
     var i;
@@ -185,6 +185,25 @@ var resolveUrl = function (path) {
     var extendedPath = 'extensions/themes/' + theme + '/' + path;
     var file = new File('/' + extendedPath);
     return file.isExists() ? extendedPath : 'theme/' + path;
+};
+
+var getCarbonServerAddress = function (trans) {
+    var carbon = require('carbon');
+    var config = require('/configs/designer.json');
+    var host = config.host;
+    var url;
+    var carbonServerAddress = carbon.server.address(trans);
+    var carbonUrlArrayed = carbonServerAddress.split(":");
+    var authUrlProtocol = host.protocol || carbonUrlArrayed[0];
+    var authUrlPort = host.port || carbonUrlArrayed[2];
+    var serverConfigService = carbon.server.osgiService('org.wso2.carbon.base.api.ServerConfigurationService');
+    var hostName = host.hostname || serverConfigService.getFirstProperty("HostName");
+    if (hostName == null || hostName === '' || hostName === 'null' || hostName.length <= 0) {
+        url = carbonServerAddress;
+    } else {
+        url = authUrlProtocol + "://" + hostName + ":" + authUrlPort;
+    }
+    return url;
 };
 
 var getLocaleResourcePath = function () {
