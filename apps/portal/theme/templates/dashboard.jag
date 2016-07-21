@@ -1,6 +1,6 @@
 <%
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,27 @@
     // If the pageId is null, render the landing page
     pageId = pageId || dashboard.landing;
 
-    var usr = require('/modules/user.js'),
-        user = usr.current(),
-        isAnonView = request.getParameter('isAnonView'),
-        queryString = request.getQueryString();
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    var isAnonView = request.getParameter('isAnonView');
+    var isPreview = request.getParameter('preview');
+    var queryString = request.getQueryString();
+    var isPersonalizeEnabled = request.getParameter('dashboardeditor');
+    var userRoles = [];
+    var viewId = request.getParameter('currentView');
+    var constants = require('/modules/constants.js');
 
+    if (!user) {
+        userRoles.push(constants.ANONYMOUS_ROLE);
+    } else {
+        var tempRoles = usr.getUserRoles();
+        if (isPreview) {
+            userRoles.push(constants.ANONYMOUS_ROLE);
+        }
+        for (var i = 0; i < tempRoles.length; i++) {
+            userRoles.push(tempRoles[i]);
+        }
+    }
     // Get the anon view
     if (!user) {
         if (isAnonView) {
@@ -37,9 +53,8 @@
     } else {
         isAnonView = JSON.parse(isAnonView);
 
-        if((user.domain != urlDomain && urlDomain) ||
-            (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) &&
-                !utils.allowed(user.roles, dashboard.permissions.viewers))) {
+        if ((user.domain != urlDomain && urlDomain) ||
+                (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
             isAnonView = true;
         }
     }
@@ -102,6 +117,13 @@
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
 <body class="dashboard lang_<%=request.getLocale()%> dark">
+    <!-- Modal -->
+    <div class="modal fade" id="dashboardViewModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content clearfix">
+            </div>
+        </div>
+    </div>
     <!-- .left-sidebar -->
     <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
         <div class="nano">
@@ -278,6 +300,11 @@
 
             <!-- page content -->
             <% if(typeof  bgColor === 'undefined'){ %>
+                <div class="form-group hide" id="list-user-views">
+                    <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
+                    data-style="btn-default" data-width="100px" style="width: 200px">
+                    </select>
+                </div>
                 <div class="container-fluid body-wrapper">
                 <div class="nano" >
             <% } else { %>
@@ -295,7 +322,6 @@
                     </div>
                 </div>
             </div>
-        <!--/div-->
     </div><!-- /#page-content-wrapper -->
 
 
@@ -466,10 +492,44 @@
         </div>
     </script>
 
+    <!-- Handlebar templates -->
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString pageId}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString null allowedViews}}{{/traverseMenu}}
     </script>
 
+    <script id="ds-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
+            <h3 class="modal-title" id="deleteModalLabel">
+                {{#if hasComponent}}
+                <%=i18n.localize("dashboard.view.delete.message")%>
+                {{/if}}
+            </h3>
+        </div>
+        {{#if hasComponent}}
+        <div class="pull-right">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btn-delete"><%=i18n.localize("delete")%></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("cancel")%></button>
+            </div>
+        </div>
+        {{else}}
+        <div class="modal-body">
+            <%=i18n.localize("delete.block.only.message")%>
+            <input type="radio" name="delete-option" value="block" class="hidden" checked>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btn-delete" data-dismiss="modal"><%=i18n.localize("yes.label")%></button>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("no.label")%></button>
+        </div>
+        {{/if}}
+    </script>
+   <!-- View options for a particular page -->
+    <script id="view-option-hbs" type="text/x-handlebars-template">
+        <option value = {{viewId}}>{{viewName}}</option>
+    </script>
+
+    <script src="<%=urlPrefix%>js/async.js"></script>
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
     <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
@@ -631,10 +691,16 @@
         });
 
         //usage : in traverseMenu helper
-        var user = <%= user %>,
-            queryString = <%= stringify(queryString) %>,
-            isAnonView = <%= isAnonView %>,  
-            pageId = <%= stringify(pageId) %>;
+        var user = <%= user %>;
+        var queryString = <%= stringify(queryString) %>;
+        var isAnonView = <%= isAnonView %>;
+        var isPersonalizeEnabled = <%= isPersonalizeEnabled %>;
+        var userRolesList = <%= userRoles %>;
+        var currentView = <%= stringify(viewId) %>;
+        var embeddableView = null;
+        <% if (typeof bgColor !== 'undefined') { %>
+                embeddableView = <%= stringify(vId) %>;
+        <% } %>
     </script>
 </body>
 </html>
