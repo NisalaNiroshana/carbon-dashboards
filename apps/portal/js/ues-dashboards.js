@@ -45,7 +45,7 @@
 
         var sandbox = container.find('.ues-component');
         sandbox.attr('id', component.id).attr('data-component-id', component.id);
-        setupTitleBar(sandbox,component);
+        setupTitleBar(sandbox, component);
         if (component.content.styles.hide_gadget) {
             hideGadget(sandbox);
         } else {
@@ -63,7 +63,7 @@
     var updateComponent = function (component, done) {
         var plugin = findPlugin(component.content.type);
         var container = $('#' + component.id);
-        setupTitleBar(container,component);
+        setupTitleBar(container, component);
         if (component.content.styles.hide_gadget) {
             hideGadget(container);
         } else {
@@ -247,7 +247,7 @@
 
     var isGadgetUnavailable = function (gadgetComponetBox) {
         var isGadgetExists = false;
-        if(ues.global.dashboard.shareDashboard){
+        if (ues.global.dashboard.shareDashboard) {
             ues.store.sharedAsset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
                 isGadgetExists = error
             });
@@ -449,6 +449,14 @@
         return path;
     };
 
+    var getDashboardID = function () {
+        return ues.global.dashboard.id;
+    };
+
+    var getDashboardName = function () {
+        return ues.global.dashboard.title;
+    };
+
     ues.components = {
         create: createComponent,
         update: updateComponent,
@@ -461,7 +469,9 @@
         findPage: findPage,
         resolveURI: resolveURI,
         finishedLoadingGadget: finishedLoading,
-        findComponent: findComponent
+        findComponent: findComponent,
+        getDashboardID: getDashboardID,
+        getDashboardName: getDashboardName
     };
 
     ues.assets = {};

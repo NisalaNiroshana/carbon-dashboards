@@ -78,7 +78,7 @@
      */
     var RPC_SERVICE_GADGET_CALLBACK = 'RPC_SERVICE_GADGET_CALLBACK';
 
-	/**
+    /**
      * RPC service name of lost focus event notifications.
      * @const
      * @private
@@ -91,6 +91,20 @@
      * @private
      */
     var RPC_SERVICE_FINISHEDLOADING_CALL = 'RPC_SERVICE_FINISHEDLOADING_CALL';
+
+    /**
+     * RPC service name of getting dashboard ID
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GETDASHBOARDID_CALL = 'RPC_SERVICE_GETDASHBOARDID_CALL';
+
+    /**
+     * RPC service name of getting dashboard Name
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GETDASHBOARDNAME_CALL = 'RPC_SERVICE_GETDASHBOARDNAME_CALL';
 
     var username;
     var encodeHash = false;
@@ -282,9 +296,19 @@
         ues.dashboards.finishedLoadingGadget();
     });
 
+    //get id of the dashboard
+    gadgets.rpc.register(RPC_SERVICE_GETDASHBOARDID_CALL, function () {
+        sendGadgetResponse(this.f, RPC_SERVICE_GETDASHBOARDID_CALL, ues.dashboards.getDashboardID());
+    });
+
+    //get name of the dashboard
+    gadgets.rpc.register(RPC_SERVICE_GETDASHBOARDNAME_CALL, function () {
+        sendGadgetResponse(this.f, RPC_SERVICE_GETDASHBOARDNAME_CALL, ues.dashboards.getDashboardName());
+    });
+
     // Notify each gadgets when the user clicks on the dashboard.
-    $(document).on('click', function() {
-        $('.ues-component-box iframe').each(function() {
+    $(document).on('click', function () {
+        $('.ues-component-box iframe').each(function () {
             gadgets.rpc.call($(this).attr('id'), RPC_SERVICE_LOST_FOCUS_CALLBACK, null, null);
         });
     });
