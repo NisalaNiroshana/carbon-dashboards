@@ -10,7 +10,21 @@ var dest;
     var log = new Log();
     var method = request.getMethod();
     var configs = require('/configs/portal.js').config();
-    dest = request.getParameter('destination');
+
+    /**
+     * Sanitize the input value.
+     * @param destination {String}
+     * @return string
+     * @private
+     */
+    var sanitizeDestination = function (destination) {
+        if (!destination) {
+            return "";
+        }
+        return destination.replace(/[^a-zA-Z0-9-_/ ]/g, "");
+    };
+
+    dest = sanitizeDestination(request.getParameter('destination'));
 
     if (method === 'POST') {
         carbon = require('carbon');
