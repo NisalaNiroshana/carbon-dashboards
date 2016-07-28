@@ -8,9 +8,35 @@ var fresh;
     var dashboardId;
     var matcher = new URIMatcher(request.getRequestURI());
 
+    /**
+     * Sanitize the input value.
+     * @param input {String}
+     * @return string
+     * @private
+     */
+    var sanitizeInput = function (input) {
+        if (!input) {
+            return "";
+        }
+        return input.replace(/[^a-z0-9-\s]/gim, "");
+    };
+
+    /**
+     * Sanitize the user given id to the standards.
+     * @param id {String}
+     * @return string
+     * @private
+     * */
+    var sanitizeDashboardID = function (id) {
+        if (!id) {
+            return "";
+        }
+        return id.replace(/[^\w]/g, '-').toLowerCase();
+    };
+
     if (matcher.match('/dashboards/{id}') || matcher.match('/dashboards/{id}/{page}')) {
         vars = matcher.elements();
-        dashboardId = vars.id;
+        dashboardId = sanitizeDashboardID(sanitizeInput(vars.id));
         pageId = vars.page;
     }
 
@@ -64,7 +90,7 @@ var fresh;
         }
 
         if (user && !urlDomain && user.domain != superDomain) {
-            response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain)+ "dashboards/" + dashboardId);
+            response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain) + "dashboards/" + dashboardId);
             return;
         }
 
@@ -76,8 +102,8 @@ var fresh;
     if (method === 'POST') {
         dashboard = {
             id: dashboardId,
-            title: request.getParameter('title'),
-            description: request.getParameter('description'),
+            title: sanitizeInput(request.getParameter('title')),
+            description: sanitizeInput(request.getParameter('description')),
             permissions: {
                 viewers: ['Internal/everyone'],
                 editors: ['Internal/everyone']
