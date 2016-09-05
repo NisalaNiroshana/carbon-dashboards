@@ -28,14 +28,22 @@
     if(user === null) {
         response.sendRedirect(relayState);
     } else {
-        var config = require('/configs/portal.js').config(),
-                sso = require('sso'),
-                sso_sessions = application.get('sso_sessions'),
-                sessionId = session.getId(),
-                attr = config.authentication.methods.sso.attributes,
-                encodedSAMLLogoutRequest = sso.client.getEncodedSAMLLogoutRequest(user, sso_sessions[session.getId()], attr.issuer),
-                //postUrl = "https://" + process.getProperty('carbon.local.ip') + ":" + process.getProperty('https.port');
-                postUrl = attr.identityProviderURL;
+        var config = require('/configs/portal.js').config();
+        var sso = require('sso');
+        var sso_sessions = application.get('sso_sessions');
+        var sessionId = session.getId();
+        var attr = config.authentication.methods.sso.attributes;
+        var carbon = require('carbon');
+        var superTenant = carbon.server.superTenant;
+        var encodedSAMLLogoutRequest;
+
+        if (attr.requestSigningEnabled) {
+            encodedSAMLLogoutRequest = sso.client.getEncodedSignedSAMLLogoutRequest(user, sso_sessions[session.getId()], attr.issuer, superTenant.tenantId, superTenant.domain, attr.identityProviderURL, attr.defaultNameIDPolicy);
+        } else {
+            encodedSAMLLogoutRequest = sso.client.getEncodedSAMLLogoutRequest(user, sso_sessions[session.getId()], attr.issuer);
+        }
+
+        var postUrl = attr.identityProviderURL;
         var log = new Log();
         if(log.isDebugEnabled()){
             log.debug("store session index : " + sso_sessions[session.getId()] + " postURL: " +postUrl);

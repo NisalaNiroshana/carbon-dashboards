@@ -25,7 +25,9 @@
             attr = configs.authentication.methods.sso.attributes,
             destination = request.getParameter("destination"),
             referer =  request.getHeader("referer"),
-            ignoreReferer = request.getParameter("ignoreReferer");
+            ignoreReferer = request.getParameter("ignoreReferer"),
+            carbon = require('carbon'),
+            superTenant = carbon.server.superTenant;;
 
     if(destination){
         referer = destination;
@@ -40,12 +42,18 @@
     var relayState = (referer ? referer : '/portal');
     //TODO: need to parameterize default value in order to support app renaming
 
-            var encodedSAMLAuthRequest = sso.client.getEncodedSAMLAuthRequest(attr.issuer);
-            var log = new Log();
-            var postUrl = attr.identityProviderURL;
-            if(log.isDebugEnabled()){
-                log.debug('Login URL: '+postUrl);
-            }
+    var encodedSAMLAuthRequest;
+    if (attr.requestSigningEnabled) {
+        encodedSAMLAuthRequest = sso.client.getEncodedSignedSAMLAuthRequest(attr.issuer, attr.identityProviderURL, attr.acs, attr.isPassive, superTenant.tenantId, superTenant.domain, attr.defaultNameIDPolicy);
+    } else {
+        encodedSAMLAuthRequest = sso.client.getEncodedSAMLAuthRequest(attr.issuer);
+    }
+
+    var log = new Log();
+    var postUrl = attr.identityProviderURL;
+    if(log.isDebugEnabled()){
+        log.debug('Login URL: '+postUrl);
+    }
     session.remove("Loged");
     if (!session.get("Loged")) {
         %>
