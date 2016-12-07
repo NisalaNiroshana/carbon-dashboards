@@ -18,6 +18,8 @@ package org.wso2.carbon.dashboards.metadata.api;
  *
  */
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.dashboards.metadata.bean.Metadata;
 import org.wso2.carbon.dashboards.metadata.bean.PaginationContext;
 import org.wso2.carbon.dashboards.metadata.bean.Query;
@@ -25,39 +27,84 @@ import org.wso2.carbon.dashboards.metadata.exception.MetadataException;
 import org.wso2.carbon.dashboards.metadata.provider.MetadataProvider;
 import org.wso2.msf4j.Microservice;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.util.List;
 
-public class MetadataProviderAPI implements MetadataProvider, Microservice {
+public class MetadataProviderAPI implements Microservice {
 
-    @GET
-    @Produces()
-    public boolean isExists(Query query) throws MetadataException {
-        return false;
-    }
+    private static final Log log = LogFactory.getLog(MetadataProviderAPI.class);
 
+//    public boolean isExists(Query query) throws MetadataException {
+//        return false;
+//    }
+
+    @POST
+    @Path("/add")
+    @Consumes("application/json")
+    @Produces("application/json")
     public void add(Metadata metadata) throws MetadataException {
-
+        MetadataProvider metadataProvider = DataHolder.getMetadataProvider();
+        if (metadataProvider != null) {
+            metadataProvider.add(metadata);
+        }
     }
 
+    @PUT
+    @Path("/update")
+    @Consumes("application/json")
+    @Produces("application/json")
     public void update(Metadata metadata) throws MetadataException {
-
+        MetadataProvider metadataProvider = DataHolder.getMetadataProvider();
+        if (metadataProvider != null) {
+            metadataProvider.update(metadata);
+        }
     }
 
+    @DELETE
+    @Path("/delete")
+    @Consumes("application/json")
+    @Produces("application/json")
     public void delete(Query query) throws MetadataException {
-
+        MetadataProvider metadataProvider = DataHolder.getMetadataProvider();
+        if (metadataProvider != null) {
+            metadataProvider.delete(query);
+        }
     }
 
-    @GET
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("/get")
     public Metadata get(Query query) throws MetadataException {
-        Metadata metadata = new Metadata();
-        metadata.setName("Sample Metadata");
-        metadata.setShared(false);
-        return metadata;
-    }
-
-    public List<Metadata> get(Query query, PaginationContext paginationContext) throws MetadataException {
+        MetadataProvider metadataProvider = DataHolder.getMetadataProvider();
+        if (metadataProvider != null) {
+            return metadataProvider.get(query);
+        }
         return null;
     }
+
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("/getall")
+    public List<Metadata> get(Query query, PaginationContext paginationContext) throws MetadataException {
+        MetadataProvider metadataProvider = DataHolder.getMetadataProvider();
+        if (metadataProvider != null) {
+            return metadataProvider.get(query, paginationContext);
+        }
+        return null;
+    }
+
+    @GET
+    @Path("/sayHello")
+    public String sayHello() {
+        return "Hello!";
+    }
+
 }
