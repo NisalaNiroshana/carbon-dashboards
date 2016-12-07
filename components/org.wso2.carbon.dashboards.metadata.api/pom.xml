@@ -42,6 +42,7 @@
                         <Import-Package>
                             org.wso2.carbon.dashboards.metadata.*;version=${carbon.dashboards.version},
                             org.wso2.msf4j.*;version="${msf4j-core.version}",
+                            org.apache.commons.logging.*,
                             javax.ws.rs.*
                         </Import-Package>
                     </instructions>
