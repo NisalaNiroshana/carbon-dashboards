@@ -91,7 +91,7 @@
                             javax.sql.*
                         </Import-Package>
                         <Export-Package>
-                            org.wso2.carbon.dashboards.metadata.*;version="${carbon.uuf.core.version}"
+                            org.wso2.carbon.dashboards.metadata.*;version="${carbon.dashboards.version}"
                         </Export-Package>
                     </instructions>
                 </configuration>
