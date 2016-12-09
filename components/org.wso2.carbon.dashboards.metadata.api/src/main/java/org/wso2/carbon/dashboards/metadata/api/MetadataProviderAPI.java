@@ -93,10 +93,10 @@ public class MetadataProviderAPI implements Microservice {
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/getall")
-    public List<Metadata> get(Query query, PaginationContext paginationContext) throws MetadataException {
+    public List<Metadata> getAll(Query query) throws MetadataException {
         MetadataProvider metadataProvider = DataHolder.getMetadataProvider();
         if (metadataProvider != null) {
-            return metadataProvider.get(query, paginationContext);
+            return metadataProvider.get(query, null);
         }
         return null;
     }
