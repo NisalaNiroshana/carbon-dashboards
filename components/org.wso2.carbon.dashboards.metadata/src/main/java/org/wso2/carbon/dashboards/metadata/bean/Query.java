@@ -23,7 +23,7 @@ package org.wso2.carbon.dashboards.metadata.bean;
  */
 public class Query {
 
-    private String uuid;
+    private String url;
 
     private String owner;
 
@@ -31,12 +31,12 @@ public class Query {
 
     private String version;
 
-    public String getUuid() {
-        return uuid;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getName() {

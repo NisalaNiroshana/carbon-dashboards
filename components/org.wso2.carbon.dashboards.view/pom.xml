@@ -14,6 +14,18 @@
         <version>3.0.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards</groupId>
+            <artifactId>org.wso2.carbon.dashboards.metadata</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards</groupId>
+            <artifactId>org.wso2.carbon.dashboards.metadata.api</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -30,7 +42,7 @@
                         </goals>
                         <configuration>
                             <instructions>
-                                <Import-Package>org.wso2.carbon.dashboards.metadata.api</Import-Package>
+                                <Import-Package>org.wso2.carbon.dashboards.metadata.api,org.wso2.carbon.dashboards.metadata.internal.provider.impl,org.wso2.carbon.dashboards.metadata.*,org.wso2.carbon.dashboards.metadata.bean</Import-Package>
                             </instructions>
                         </configuration>
                     </execution>

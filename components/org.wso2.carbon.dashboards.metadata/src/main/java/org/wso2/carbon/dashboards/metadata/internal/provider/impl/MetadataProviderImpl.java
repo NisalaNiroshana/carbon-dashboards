@@ -37,6 +37,9 @@ import org.wso2.carbon.dashboards.metadata.internal.dao.utils.DAOUtils;
 import org.wso2.carbon.dashboards.metadata.provider.MetadataProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,9 +48,8 @@ import java.util.Map;
  * This is a core class of the Metadata business logic implementation.
  */
 @Component(name = "org.wso2.carbon.dashboards.metadata.internal.provider.impl.MetadataProviderImpl",
-           service = MetadataProvider.class,
-           immediate = true)
-public class MetadataProviderImpl implements MetadataProvider {
+        service = MetadataProvider.class,
+        immediate = true) public class MetadataProviderImpl implements MetadataProvider {
 
     private static final Logger log = LoggerFactory.getLogger(MetadataProviderImpl.class);
 
@@ -66,8 +68,7 @@ public class MetadataProviderImpl implements MetadataProvider {
      *
      * @param bundleContext Context of the osgi component.
      */
-    @Activate
-    protected void activate(BundleContext bundleContext) {
+    @Activate protected void activate(BundleContext bundleContext) {
         log.info("ServiceComponent activated.");
         try {
             test();
@@ -78,8 +79,7 @@ public class MetadataProviderImpl implements MetadataProvider {
     /**
      * Get called when this osgi component get unregistered.
      */
-    @Deactivate
-    protected void deactivate() {
+    @Deactivate protected void deactivate() {
         log.info("ServiceComponent deactivated.");
     }
 
@@ -87,8 +87,14 @@ public class MetadataProviderImpl implements MetadataProvider {
         log.info("test()");
         DAOUtils.getInstance().initialize("WSO2_DASHBOARD_DB");
         Metadata metadata = new Metadata();
-        metadata.setName("Test");
-        metadata.setContent("sdda fadsf dsf dsf dsaadsf1234353543b543 5");
+        metadata.setName("Test2");
+        metadata.setUrl("test");
+        try {
+            metadata.setContent(new String(Files.readAllBytes(
+                    Paths.get(System.getProperty("carbon.home") + "/deployment/dashboards/test.json"))));
+        } catch (IOException e) {
+            System.out.println("Nisala");
+        }
         metadata.setDescription("fdsfsdfsdfsdfds");
         metadata.setOwner("Chandana");
         metadata.setLastUpdatedBy("Chandana");
@@ -98,62 +104,55 @@ public class MetadataProviderImpl implements MetadataProvider {
 
         this.add(metadata);
 
-
         log.info("end test()");
     }
 
-    @Override
-    public boolean isExists(Query query) throws MetadataException {
+    @Override public boolean isExists(Query query) throws MetadataException {
         validateQuery(query);
-        if (query.getUuid() != null) {
-            return dao.isExists(query.getUuid());
-        } else if (query.getOwner() != null && query.getName() != null && query.getVersion() != null) {
-            return dao.isExists(query.getOwner(), query.getName(), query.getVersion());
-        } else if (query.getOwner() != null && query.getName() != null) {
-            return dao.isExistsOwner(query.getOwner(), query.getName());
-        } else if (query.getName() != null && query.getVersion() != null) {
-            return dao.isExistsByVersion(query.getName(), query.getVersion());
+        if (query.getOwner() != null && query.getUrl() != null && query.getVersion() != null) {
+            return dao.isExists(query.getOwner(), query.getUrl(), query.getVersion());
+        } else if (query.getOwner() != null && query.getUrl() != null) {
+            return dao.isExistsOwner(query.getOwner(), query.getUrl());
+        } else if (query.getUrl() != null && query.getVersion() != null) {
+            return dao.isExistsByVersion(query.getUrl(), query.getVersion());
+        } else if (query.getUrl() != null) {
+            return dao.isExists(query.getUrl());
         } else {
             throw new MetadataException("Insufficient parameters supplied to the command");
         }
     }
 
-    @Override
-    public void update(Metadata metadata) throws MetadataException {
+    @Override public void update(Metadata metadata) throws MetadataException {
         dao.update(metadata);
     }
 
-    @Override
-    public void add(Metadata metadata) throws MetadataException {
+    @Override public void add(Metadata metadata) throws MetadataException {
         dao.add(metadata);
     }
 
-    @Override
-    public void delete(Query query) throws MetadataException {
+    @Override public void delete(Query query) throws MetadataException {
         validateQuery(query);
-        if (query.getUuid() != null) {
-            dao.delete(query.getUuid());
-        } else if (query.getOwner() != null && query.getName() != null && query.getVersion() != null) {
-            dao.delete(query.getOwner(), query.getName(), query.getVersion());
-        } else if (query.getOwner() != null && query.getName() != null) {
-            dao.delete(query.getOwner(), query.getName());
+        if (query.getOwner() != null && query.getUrl() != null && query.getVersion() != null) {
+            dao.delete(query.getOwner(), query.getUrl(), query.getVersion());
+        } else if (query.getOwner() != null && query.getUrl() != null) {
+            dao.delete(query.getOwner(), query.getUrl());
+        } else if (query.getUrl() != null) {
+            dao.delete(query.getUrl());
         } else {
             throw new MetadataException("Insufficient parameters supplied to the command");
         }
     }
 
-    @Override
-    public Metadata get(Query query) throws MetadataException {
+    @Override public Metadata get(Query query) throws MetadataException {
         validateQuery(query);
-        if (query.getUuid() != null) {
-            return dao.get(query.getUuid());
+        if (query.getUrl() != null) {
+            return dao.get(query.getUrl());
         } else {
             throw new MetadataException("Insufficient parameters supplied to the command");
         }
     }
 
-    @Override
-    public List<Metadata> get(Query query, PaginationContext paginationContext) throws MetadataException {
+    @Override public List<Metadata> get(Query query, PaginationContext paginationContext) throws MetadataException {
         validateQuery(query);
         if (query.getOwner() != null && query.getName() != null && query.getVersion() != null) {
             return dao.list(query.getOwner(), query.getName(), query.getVersion(), paginationContext);
@@ -179,9 +178,8 @@ public class MetadataProviderImpl implements MetadataProvider {
             service = DataSourceService.class,
             cardinality = ReferenceCardinality.AT_LEAST_ONE,
             policy = ReferencePolicy.DYNAMIC,
-            unbind = "unregisterDataSourceService"
-    )
-    protected void registerDataSourceService(DataSourceService service, Map<String, String> properties) {
+            unbind = "unregisterDataSourceService") protected void registerDataSourceService(DataSourceService service,
+            Map<String, String> properties) {
 
         if (service == null) {
             log.error("Data source service is null. Registering data source service is unsuccessful.");

@@ -37,8 +37,8 @@ public class SolrBackedMetadataDAOImpl implements MetadataDAO {
     }
 
     @Override
-    public boolean isExists(String uuid) throws MetadataException {
-        return metadataDAO.isExists(uuid);
+    public boolean isExists(String url) throws MetadataException {
+        return metadataDAO.isExists(url);
     }
 
     @Override
@@ -67,8 +67,8 @@ public class SolrBackedMetadataDAOImpl implements MetadataDAO {
     }
 
     @Override
-    public void delete(String uuid) throws MetadataException {
-        metadataDAO.delete(uuid);
+    public void delete(String url) throws MetadataException {
+        metadataDAO.delete(url);
     }
 
     @Override
@@ -82,8 +82,8 @@ public class SolrBackedMetadataDAOImpl implements MetadataDAO {
     }
 
     @Override
-    public Metadata get(String uuid) throws MetadataException {
-        return metadataDAO.get(uuid);
+    public Metadata get(String url) throws MetadataException {
+        return metadataDAO.get(url);
     }
 
     @Override
