@@ -48,8 +48,9 @@ import java.util.Map;
  * This is a core class of the Metadata business logic implementation.
  */
 @Component(name = "org.wso2.carbon.dashboards.metadata.internal.provider.impl.MetadataProviderImpl",
-        service = MetadataProvider.class,
-        immediate = true) public class MetadataProviderImpl implements MetadataProvider {
+           service = MetadataProvider.class,
+           immediate = true)
+public class MetadataProviderImpl implements MetadataProvider {
 
     private static final Logger log = LoggerFactory.getLogger(MetadataProviderImpl.class);
 
