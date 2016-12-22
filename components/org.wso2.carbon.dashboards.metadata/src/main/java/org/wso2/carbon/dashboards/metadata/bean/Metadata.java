@@ -18,10 +18,15 @@
  */
 package org.wso2.carbon.dashboards.metadata.bean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.metadata.exception.MetadataException;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 /**
@@ -29,8 +34,10 @@ import java.nio.charset.Charset;
  */
 public class Metadata {
 
+    private static final Logger log = LoggerFactory.getLogger(Metadata.class);
 
-    protected String uuid;
+    protected String id;
+    protected String url;
     protected String name;
     protected String version;
     protected String description;
@@ -43,12 +50,12 @@ public class Metadata {
     protected String parentId;
     protected Object content;
 
-    public String getUuid() {
-        return uuid;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getName() {
@@ -123,8 +130,35 @@ public class Metadata {
         this.parentId = parentId;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public Object getContent() {
-        return content;
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
+        String line;
+        try {
+            br = new BufferedReader(new InputStreamReader((InputStream) content));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            log.error("Error in retrieving dashboard content");
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    log.error("Error in closing dashboard content buffered reader");
+                }
+            }
+        }
+        return sb.toString();
     }
 
     public void setContent(Object content) {

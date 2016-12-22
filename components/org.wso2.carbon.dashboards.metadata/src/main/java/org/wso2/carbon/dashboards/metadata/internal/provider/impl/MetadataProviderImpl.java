@@ -37,6 +37,9 @@ import org.wso2.carbon.dashboards.metadata.internal.dao.utils.DAOUtils;
 import org.wso2.carbon.dashboards.metadata.provider.MetadataProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -87,8 +90,14 @@ public class MetadataProviderImpl implements MetadataProvider {
         log.info("test()");
         DAOUtils.getInstance().initialize("WSO2_DASHBOARD_DB");
         Metadata metadata = new Metadata();
-        metadata.setName("Test");
-        metadata.setContent("sdda fadsf dsf dsf dsaadsf1234353543b543 5");
+        metadata.setName("Test2");
+        metadata.setUrl("test");
+        try {
+            metadata.setContent(new String(Files.readAllBytes(
+                    Paths.get(System.getProperty("carbon.home") + "/deployment/dashboards/test.json"))));
+        } catch (IOException e) {
+            System.out.println("Nisala");
+        }
         metadata.setDescription("fdsfsdfsdfsdfds");
         metadata.setOwner("Chandana");
         metadata.setLastUpdatedBy("Chandana");
@@ -98,21 +107,20 @@ public class MetadataProviderImpl implements MetadataProvider {
 
         this.add(metadata);
 
-
         log.info("end test()");
     }
 
     @Override
     public boolean isExists(Query query) throws MetadataException {
         validateQuery(query);
-        if (query.getUuid() != null) {
-            return dao.isExists(query.getUuid());
-        } else if (query.getOwner() != null && query.getName() != null && query.getVersion() != null) {
-            return dao.isExists(query.getOwner(), query.getName(), query.getVersion());
-        } else if (query.getOwner() != null && query.getName() != null) {
-            return dao.isExistsOwner(query.getOwner(), query.getName());
-        } else if (query.getName() != null && query.getVersion() != null) {
-            return dao.isExistsByVersion(query.getName(), query.getVersion());
+        if (query.getOwner() != null && query.getUrl() != null && query.getVersion() != null) {
+            return dao.isExists(query.getOwner(), query.getUrl(), query.getVersion());
+        } else if (query.getOwner() != null && query.getUrl() != null) {
+            return dao.isExistsOwner(query.getOwner(), query.getUrl());
+        } else if (query.getUrl() != null && query.getVersion() != null) {
+            return dao.isExistsByVersion(query.getUrl(), query.getVersion());
+        } else if (query.getUrl() != null) {
+            return dao.isExists(query.getUrl());
         } else {
             throw new MetadataException("Insufficient parameters supplied to the command");
         }
@@ -131,12 +139,12 @@ public class MetadataProviderImpl implements MetadataProvider {
     @Override
     public void delete(Query query) throws MetadataException {
         validateQuery(query);
-        if (query.getUuid() != null) {
-            dao.delete(query.getUuid());
-        } else if (query.getOwner() != null && query.getName() != null && query.getVersion() != null) {
-            dao.delete(query.getOwner(), query.getName(), query.getVersion());
-        } else if (query.getOwner() != null && query.getName() != null) {
-            dao.delete(query.getOwner(), query.getName());
+        if (query.getOwner() != null && query.getUrl() != null && query.getVersion() != null) {
+            dao.delete(query.getOwner(), query.getUrl(), query.getVersion());
+        } else if (query.getOwner() != null && query.getUrl() != null) {
+            dao.delete(query.getOwner(), query.getUrl());
+        } else if (query.getUrl() != null) {
+            dao.delete(query.getUrl());
         } else {
             throw new MetadataException("Insufficient parameters supplied to the command");
         }
@@ -145,8 +153,8 @@ public class MetadataProviderImpl implements MetadataProvider {
     @Override
     public Metadata get(Query query) throws MetadataException {
         validateQuery(query);
-        if (query.getUuid() != null) {
-            return dao.get(query.getUuid());
+        if (query.getUrl() != null) {
+            return dao.get(query.getUrl());
         } else {
             throw new MetadataException("Insufficient parameters supplied to the command");
         }
@@ -162,7 +170,7 @@ public class MetadataProviderImpl implements MetadataProvider {
         } else if (query.getName() != null && query.getVersion() != null) {
             return dao.list(query.getName(), query.getVersion(), paginationContext);
         } else if (query.getName() != null) {
-            return dao.listByName(query.getName(), paginationContext);
+            return dao.listByURL(query.getName(), paginationContext);
         } else {
             throw new MetadataException("Insufficient parameters supplied to the command");
         }

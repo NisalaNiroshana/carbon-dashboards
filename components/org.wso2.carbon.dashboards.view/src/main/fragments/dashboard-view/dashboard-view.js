@@ -23,15 +23,38 @@ function onRequest(env) {
     var files = Java.type('java.nio.file.Files');
     var paths = Java.type('java.nio.file.Paths');
 
-    try{
-        var content = JSON.parse(new string(files.readAllBytes(paths.get(path))));
-    } catch(Exception) {
-        Log.error(Exception);
-        sendError(500, "Something went wrong!");
+    var MetadataProviderImpl = Java.type("org.wso2.carbon.dashboards.metadata.internal.provider.impl.MetadataProviderImpl");
+    var Query = Java.type("org.wso2.carbon.dashboards.metadata.bean.Query");
+
+    var dashboardContent;
+    var dashboardMetaData;
+
+    var metadataProviderImpl = new MetadataProviderImpl();
+    var query = new Query();
+    query.setUrl(env.params.id);
+    //TODO: Need to update the hardcoded values with logged in user
+    query.setOwner("admin");
+
+    if (!metadataProviderImpl.isExists(query)) {
+        try {
+            Log.info("Dashboard is retrieved from File system");
+            dashboardMetaData = null;
+            dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));
+        } catch (Exception) {
+            Log.error(Exception);
+            sendError(500, "Something went wrong!");
+        }
+    } else {
+        Log.info("Dashboard is retrieved from DB");
+        dashboardMetaData = metadataProviderImpl.get(query);
+        dashboardContent = JSON.parse(dashboardMetaData.getContent());
     }
-    // Send the dashboard to client
-    sendToClient("dashboard", content);
+
+    // Send the dashboard and metadata to client
+    sendToClient("dashboard", dashboardContent);
+    sendToClient("metadata", dashboardMetaData);
     return {
-        dashboard: content
+        dashboard: dashboardContent,
+        metadata: dashboardMetaData
     };
 }
