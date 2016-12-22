@@ -105,7 +105,6 @@
         var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
             el = $(el);
             var node = el.data('_gridstack_node');
-
             if (node) {
                 return {
                     id: el.attr('data-id'),
@@ -162,7 +161,6 @@
         } else {
             metaDataPayload = metadata;
             metaDataPayload.parentId = metadata.id;
-
         }
         //TODO: Need to update the hardcoded values with logged in user kkkkk
         metaDataPayload.owner = "admin";
@@ -170,7 +168,6 @@
         metaDataPayload.lastUpdatedTime = new Date().getTime();
         metaDataPayload.content = JSON.stringify(dashboard);
         return metaDataPayload;
-
     };
 
     init();
