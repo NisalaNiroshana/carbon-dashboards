@@ -34,8 +34,9 @@
         <module>components/org.wso2.carbon.dashboards.metadata</module>
         <module>components/org.wso2.carbon.dashboards.metadata.api</module>
         <module>features/org.wso2.carbon.dashboards.api.feature</module>
-        <!-- <module>components/org.wso2.carbon.dashboards.designer</module>
-        <module>components/org.wso2.carbon.dashboards.portal</module> -->
+        <module>components/org.wso2.carbon.dashboards.designer</module>
+        <module>components/org.wso2.carbon.dashboards.portal</module>
+        <module>components/org.wso2.carbon.dashboards.login</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -80,6 +81,48 @@
                 <version>${slf4j-log4j12.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.security.caas</groupId>
+                <artifactId>org.wso2.carbon.security.caas</artifactId>
+                <version>${carbon.security.caas.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.security.userstore</groupId>
+                <artifactId>org.wso2.carbon.security.userstore.jdbc</artifactId>
+                <version>${carbon.security.userstore.jdbc.version}</version>
+            </dependency>
+
+            <!--UUF Themes-->
+            <dependency>
+                <groupId>org.wso2.carbon.uuf.sample</groupId>
+                <artifactId>org.wso2.carbon.uuf.sample.theme.default</artifactId>
+                <version>${carbon.uuf.core.version}</version>
+                <type>zip</type>
+                <classifier>uuf-theme</classifier>
+            </dependency>
+
+            <!--Backend dependencies-->
+            <dependency>
+                <groupId>org.wso2.carbon.uuf.sample</groupId>
+                <artifactId>org.wso2.carbon.uuf.sample.simple-auth.bundle</artifactId>
+                <version>${carbon.uuf.core.version}</version>
+            </dependency>
+
+            <!--UUF Components-->
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>org.wso2.carbon.dashboards.view</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+                <classifier>uuf-component</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>org.wso2.carbon.dashboards.designer</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+                <classifier>uuf-component</classifier>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>org.wso2.carbon.dashboards.metadata</artifactId>
                 <version>${carbon.dashboards.version}</version>
@@ -88,6 +131,20 @@
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>org.wso2.carbon.dashboards.metadata.api</artifactId>
                 <version>${carbon.dashboards.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>org.wso2.carbon.dashboards.login</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+                <classifier>uuf-component</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.uuf.sample</groupId>
+                <artifactId>org.wso2.carbon.uuf.sample.foundation</artifactId>
+                <version>${carbon.uuf.core.version}</version>
+                <type>zip</type>
+                <classifier>uuf-component</classifier>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -107,6 +164,9 @@
         <slf4j.version.range>[1.7,2)</slf4j.version.range>
         <org.wso2.carbon.datasource.version.range>[1.0.0, 1.1.0)</org.wso2.carbon.datasource.version.range>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
+        <!-- Authentication and Authorization -->
+        <carbon.security.caas.version>1.0.0-m2</carbon.security.caas.version>
+        <carbon.security.userstore.jdbc.version>1.0.0-m2</carbon.security.userstore.jdbc.version>
     </properties>
 
     <scm>

@@ -34,19 +34,42 @@
     </parent>
 
     <dependencies>
+        <!--UUF Components-->
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>org.wso2.carbon.dashboards.view</artifactId>
-            <version>${carbon.dashboards.version}</version>
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>org.wso2.carbon.dashboards.designer</artifactId>
-            <version>${carbon.dashboards.version}</version>
             <type>zip</type>
             <classifier>uuf-component</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.sample.foundation</artifactId>
+            <type>zip</type>
+            <classifier>uuf-component</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.sample.simple-auth</artifactId>
+            <type>zip</type>
+            <classifier>uuf-component</classifier>
+        </dependency>
+        <!--UUF Themes-->
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.sample.theme.default</artifactId>
+            <type>zip</type>
+            <classifier>uuf-theme</classifier>
+        </dependency>
+        <!--Backend dependencies-->
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.sample.simple-auth.bundle</artifactId>
         </dependency>
     </dependencies>
 
@@ -64,6 +87,20 @@
                         <goals>
                             <goal>create-app</goal>
                         </goals>
+                        <configuration>
+                            <instructions>
+                                <Import-Package>
+                                    org.wso2.carbon.uuf.sample.simpleauth.bundle
+                                </Import-Package>
+                            </instructions>
+                            <!--All backend dependencies should be specified here-->
+                            <bundles>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.uuf.sample.simple-auth.bundle</symbolicName>
+                                    <version>${carbon.uuf.core.version}</version>
+                                </bundle>
+                            </bundles>
+                        </configuration>
                     </execution>
                 </executions>
 
