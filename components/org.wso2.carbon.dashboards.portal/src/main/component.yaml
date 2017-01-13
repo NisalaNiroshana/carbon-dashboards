@@ -23,4 +23,4 @@ bindings:
 config:
     appName: "Portal"
     loginRedirectUri: "/"
-    logoutRedirectUri: "/simple-auth/login"
+    logoutRedirectUri: "/login"
