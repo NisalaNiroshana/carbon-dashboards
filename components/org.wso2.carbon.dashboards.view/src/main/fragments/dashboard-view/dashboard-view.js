@@ -32,9 +32,10 @@ function onRequest(env) {
 
     var metadataProviderImpl = new MetadataProviderImpl();
     var query = new Query();
-    var user = getSession().getUser();
+    //var user = getSession().getUser();
     query.setUrl(env.params.id);
-    query.setOwner(user.getUsername());
+    //query.setOwner(user.getUsername());
+    query.setOwner("admin");
 
     try {
         isDashboardExistsInDB = metadataProviderImpl.isExists(query);

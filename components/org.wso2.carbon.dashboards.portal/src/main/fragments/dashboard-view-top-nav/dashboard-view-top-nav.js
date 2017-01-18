@@ -16,7 +16,7 @@
 function onRequest(env) {
     var session = getSession();
     var user = {
-        userName: session.getUser().getUsername(),
+        userName: "admin",
         domain: "carbon.super",
         isEditor: true,
         isOwner: true
