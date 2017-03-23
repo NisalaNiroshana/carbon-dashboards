@@ -1,8 +1,4 @@
 bindings:
-    - zoneName: "org.wso2.carbon.dashboards.portal.feature.header"
-      mode: "append"
-      fragments:
-        - "org.wso2.carbon.dashboards.portal.feature.header"
     - zoneName: "org.wso2.carbon.dashboards.portal.feature.dashboard-label"
       mode: "append"
       fragments:
