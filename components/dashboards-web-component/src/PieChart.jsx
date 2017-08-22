@@ -1,4 +1,7 @@
 import React from 'react';
+//import x  from './list/App.css';
+import ShadowDOM from 'react-shadow';
+import x from './list/isoJs1.js';
 
 class PieChart extends React.Component {
     constructor(props) {
@@ -43,7 +46,7 @@ class PieChart extends React.Component {
     }
 
     render() {
-        return <div id={this.state.id} />;
+        return <section><div className="test">{x()}</div><div id={this.state.id} /></section>;
     }
 }
 

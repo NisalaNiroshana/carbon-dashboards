@@ -1,4 +1,6 @@
 import React from 'react';
+//import '../public/css/App.css';
+import ShadowDOM from 'react-shadow';
 
 class BarChart extends React.Component {
     constructor(props) {
@@ -36,8 +38,6 @@ class BarChart extends React.Component {
             },
         ];
 
-        console.log('BBBBBBBBBBBBBB');
-        console.log(data);
         const config = {
             type: 'bar',
             x: 'Country',
@@ -58,7 +58,7 @@ class BarChart extends React.Component {
     }
 
     render() {
-        return <div ref={this.state.id} id={this.state.id} />;
+        return <section><div className="test">Nisala WSo2</div><div ref={this.state.id} id={this.state.id} /></section>;
     }
 }
 
