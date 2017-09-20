@@ -17,29 +17,28 @@
  */
 
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import WidgetsList from './WidgetsList';
-import GoldenLayout from 'golden-layout';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import WidgetsIcon from 'material-ui/svg-icons/device/widgets';
 import PagesIcon from 'material-ui/svg-icons/editor/insert-drive-file';
 import Drawer from 'material-ui/Drawer';
-import '../public/css/designer.css';
-import PagesPanel from './designer/components/PagesPanel'
 import Snackbar from 'material-ui/Snackbar';
-import WidgetIcon from 'material-ui/svg-icons/device/widgets';
-import List from 'material-ui/List/';
-import ListItem from 'material-ui/List/ListItem';
 
 import Header from './Header';
 import {widgetLoadingComponent, dashboardLayout} from './WidgetLoadingComponent';
 import DashboardsAPIs from './utils/dashboard-apis';
 import DashboardRenderingComponent from './DashboardRenderingComponent';
 import DashboardUtils from './utils/dashboard-utils';
+import WidgetsList from './WidgetsList';
+import PagesPanel from './designer/components/PagesPanel';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
+import '../public/css/designer.css';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 const config = {
@@ -64,8 +63,6 @@ const config = {
     content: [],
 };
 
-// let widgetList = [];
-let isDashboardLoaded = false;
 const styleConstants = {
     actionPanel: {
         width: 58
@@ -74,7 +71,7 @@ const styleConstants = {
         styles: {
             width: '314px'
         },
-        
+
     }
 };
 
@@ -82,9 +79,9 @@ export default class DashboardDesigner extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            leftSidebarOpen: false,
+            leftSidebarOpen: true,
             showPagesPanel: false,
-            showWidgetsPanel: false,
+            showWidgetsPanel: true,
             dashboard: {},
             dashboardUrl: '',
             dashboardName: '',
@@ -94,10 +91,7 @@ export default class DashboardDesigner extends React.Component {
         };
         this.onWidgetsIconClick = this.onWidgetsIconClick.bind(this);
         this.onPagesIconClick = this.onPagesIconClick.bind(this);
-        this.resetSidebarPanels = this.resetSidebarPanels.bind(this);
         this.setDashboardProperties = this.setDashboardProperties.bind(this);
-        // this.initializeWidgetList = this.initializeWidgetList.bind(this);
-        // this.setWidgetList = this.setWidgetList.bind(this);
         this.getDashboardContent = this.getDashboardContent.bind(this);
         this.loadTheme = this.loadTheme.bind(this);
     }
@@ -110,16 +104,16 @@ export default class DashboardDesigner extends React.Component {
         });
         window.onresize = function () {
             dashboardLayout.updateSize();
-        };        
+        };
 
         // Register global method for notifications.
         window.global = window.global || {};
-        window.global.notify = (function(m) {
+        window.global.notify = (function (m) {
             this.setState({
                 notify: true,
                 notificationMessage: m
             });
-        }).bind(this);    
+        }).bind(this);
     }
 
     render() {
@@ -128,36 +122,44 @@ export default class DashboardDesigner extends React.Component {
             <div>
                 <MuiThemeProvider muiTheme={muiTheme}>
                     <div>
-                        <Header dashboardName="Dashboard Designer" />
-                        {/* <WidgetsList /> */}
+                        <Header dashboardName="Dashboard Designer"/>
+                        <div className="portal-navigation-bar">
+                            <Link to={"/portal/"}>
+                                <FloatingActionButton mini={true} className="navigation-icon">
+                                    <BackIcon />
+                                </FloatingActionButton>
+                            </Link>
+                        </div>
                         <div className="designer-left-action-panel">
                             <Menu width={styleConstants.actionPanel.width}>
-                                <MenuItem primaryText="&nbsp;" leftIcon={<WidgetsIcon />} onClick={this.onWidgetsIconClick} />
-                                <MenuItem primaryText="&nbsp;" leftIcon={<PagesIcon />} onClick={this.onPagesIconClick} />
+                                <MenuItem primaryText="&nbsp;" leftIcon={<WidgetsIcon />}
+                                          onClick={this.onWidgetsIconClick}/>
+                                <MenuItem primaryText="&nbsp;" leftIcon={<PagesIcon />}
+                                          onClick={this.onPagesIconClick}/>
                             </Menu>
                         </div>
                         <div className="designer-container">
-                            <Drawer open={this.state.leftSidebarOpen} containerClassName="designer-left-pane" containerStyle={styleConstants.sidebar.styles}>
-                                <PagesPanel show={this.state.showPagesPanel} dashboard={this.state.dashboard} />
-                                <WidgetsList show={this.state.showWidgetsPanel} />
+                            <Drawer open={this.state.leftSidebarOpen} containerClassName="designer-left-pane"
+                                    containerStyle={styleConstants.sidebar.styles}>
+                                <PagesPanel show={this.state.showPagesPanel} dashboard={this.state.dashboard}/>
+                                <WidgetsList show={this.state.showWidgetsPanel}/>
                             </Drawer>
                         </div>
 
                         <div id="dashboard-view" className={this.state.designerClass}></div>
-                        <DashboardRenderingComponent config={config} name={this.state.dashboardContent} 
-                                dashboardContent={this.getDashboardContent(this.props.match.params[1], this.state.dashboardContent, this.state.landingPage)}/>
+                        <DashboardRenderingComponent config={config} name={this.state.dashboardContent}
+                                                     dashboardContent={this.getDashboardContent(this.props.match.params[1], this.state.dashboardContent, this.state.landingPage)}/>
 
-                        <Snackbar open={this.state.notify} message={this.state.notificationMessage} autoHideDuration={4000} />
+                        <Snackbar open={this.state.notify} message={this.state.notificationMessage}
+                                  autoHideDuration={4000}/>
                     </div>
                 </MuiThemeProvider>
-                {/* <div id="designContainer" style={{marginLeft: "15%", color: "white", height: "88vh"}}></div> */}
             </div>
         );
     }
 
     setDashboardProperties(response) {
         this.setState({
-            // dashboardUrl: response.data.url,
             dashboardName: response.data.name,
             dashboardContent: JSON.parse(response.data.pages),
             dashboard: response.data,
@@ -166,54 +168,31 @@ export default class DashboardDesigner extends React.Component {
     }
 
     onWidgetsIconClick() {
-        this.resetSidebarPanels();
+        let leftSidebarOpen = this.state.showPagesPanel ? true : !this.state.leftSidebarOpen;
         this.setState({
-            leftSidebarOpen: !this.state.leftSidebarOpen,
-            showWidgetsPanel: true
+            leftSidebarOpen: leftSidebarOpen,
+            showWidgetsPanel: true,
+            showPagesPanel: false,
+            designerClass: leftSidebarOpen ? "dashboard-designer-container-expanded" :
+                "dashboard-designer-container-collapsed"
         });
+        setTimeout(function () {
+            dashboardLayout.updateSize();
+        }, 10);
     }
 
     onPagesIconClick() {
-        this.resetSidebarPanels();
+        let leftSidebarOpen = this.state.showWidgetsPanel ? true : !this.state.leftSidebarOpen;
         this.setState({
-            leftSidebarOpen: !this.state.leftSidebarOpen,
-            showPagesPanel: true
+            leftSidebarOpen: leftSidebarOpen,
+            showPagesPanel: true,
+            showWidgetsPanel: false,
+            designerClass: leftSidebarOpen ? "dashboard-designer-container-expanded" :
+                "dashboard-designer-container-collapsed"
         });
-    }
-
-    // setWidgetList(response) {
-    //     widgetList = response.data;
-    //     this.setState({
-    //         widgetList: response.data
-    //     }, this.initializeWidgetList);
-    // }
-
-    // initializeWidgetList(isWidgetsLoaded) {
-    //     let newItemConfig;
-    //     if (isWidgetsLoaded) {
-    //         isDashboardLoaded = isWidgetsLoaded;
-    //     }
-    //     if (!(widgetList.length === 0) && isDashboardLoaded) {
-    //         widgetList.map(widget => {
-    //             newItemConfig = {
-    //                 title: widget.name,
-    //                 type: 'react-component',
-    //                 component: widget.name
-    //             };
-    //             widgetLoadingComponent.createDragSource(document.getElementById(widget.name), newItemConfig);
-    //             widgetLoadingComponent.loadWidget(widget.name)
-    //         });
-    //         if (!isWidgetsLoaded) {
-    //             widgetLoadingComponent.initializeDashboard();
-    //         }
-    //     }
-    // }
-
-    resetSidebarPanels() {
-        this.setState({
-            showPagesPanel: false,
-            showWidgetsPanel: false
-        });
+        setTimeout(function () {
+            dashboardLayout.updateSize();
+        }, 10);
     }
 
     getDashboardContent(pageId, dashboardContent, landingPage) {
