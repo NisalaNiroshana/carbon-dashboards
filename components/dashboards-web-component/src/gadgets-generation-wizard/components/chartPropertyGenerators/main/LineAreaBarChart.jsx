@@ -21,6 +21,7 @@ import React, { Component } from 'react';
 // Material UI Components
 import FlatButton from 'material-ui/FlatButton';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import Checkbox from 'material-ui/Checkbox';
 // App Components
 import SubChart from '../sub/LineAreaBarChart';
 import TextProperty from '../../inputTypes/TextProperty';
@@ -41,7 +42,10 @@ class LineAreaBar extends Component {
         this.state = {
             configuration: props.configuration,
             expandAdvanced: false,
+            expandPublisher: false
         };
+        this.handlePublisherWidgetCheck = this.handlePublisherWidgetCheck.bind(this);
+        this.handleSubscriberWidgetCheck = this.handleSubscriberWidgetCheck.bind(this);
     }
 
     /**
@@ -157,7 +161,17 @@ class LineAreaBar extends Component {
         this.props.onConfigurationChange(state.configuration);
     }
 
+    handlePublisherWidgetCheck(event, isChecked) {
+        this.setState({expandPublisher: isChecked});
+    }
+
+    handleSubscriberWidgetCheck(event, isChecked) {
+
+    }
+
     render() {
+        console.log(this)
+        console.log("AAAA")
         return (
             <div>
                 <StreamProperty
@@ -231,6 +245,37 @@ class LineAreaBar extends Component {
                     >
                         <br />
                         <br />
+                        <h3>PubSub Configurations</h3>
+                        <Checkbox
+                            label="Publisher Widget"
+                            onCheck={this.handlePublisherWidgetCheck}
+                        />
+                        <Checkbox
+                            label="Subscriber Widget"
+                            onCheck={this.handleSubscriberWidgetCheck}
+                        />
+                        <Card
+                            style={this.state.expandPublisher ? { padding: 30 } : { display: "none" }}
+                            expanded={this.state.expandPublisher}
+                            onExpandChange={e => this.setState({ expandPublisher: e })}
+                        >
+                        <CardHeader
+                            title="Select data to publish"
+                            actAsExpander
+                            showExpandableButton
+                        />
+                        <CardMedia
+                            expandable
+                            style={{paddingLeft:"10%"}}
+                        >
+                            {this.props.metadata.names.map((name) => {
+                                return <Checkbox label={name}/>
+                            })}
+                        </CardMedia>
+                        </Card>
+                        <br />
+                        <br />
+                        <h3>Advanced Chart Configurations</h3>
                         <SwitchProperty
                             id="append"
                             value={this.state.configuration.append}
