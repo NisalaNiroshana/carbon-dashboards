@@ -4,9 +4,8 @@
     "thumbnailURL": "",
     "configs": {
         "pubsub": {
-            "types": [
-                "subscriber"
-            ]
+            "types": ["subscriber"],
+            "subscriberTopics": ["topic_sa","topic_sb"]
         }
     }
 }

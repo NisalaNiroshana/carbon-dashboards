@@ -100,4 +100,32 @@ export default class DashboardUtils {
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();
     };
+
+    static getWidgetProps(dashboardContent,widgetID){
+        let widgetProps = {};
+        console.log(dashboardContent)
+        for(let i = 0 ; i < dashboardContent.length ; i++){
+            console.log(":::::::::::::::::::::::::::::::")
+            if(dashboardContent.type == 'component' && widgetID == dashboardContent.props.id){
+                return dashboardContent.props;
+            } else {
+                console.log(dashboardContent)
+                this.getWidgetProps(dashboardContent.content,widgetID);
+            }
+
+        }
+        // dashboardContent.map(component => {
+        //     console.log(":::::::::::::::::::::::::::::::")
+        //     if(component.type == 'component' && widgetID == component.props.id){
+        //         widgetProps = component.props;
+        //     } else {
+        //         this.getWidgetProps(component.content,widgetID);
+        //     }
+        // });
+        //
+        // console.log("AAAAAAAA")
+        // console.log(widgetProps)
+        // console.log("BBBBBBBB")
+        // return widgetProps;
+    }
 }
